@@ -1,3 +1,4 @@
+// Clock Logic
 function updateClock() {
   const now = new Date();
   let hours = now.getHours();
@@ -21,6 +22,14 @@ function bringToFront(element) {
   element.style.zIndex = highestZ;
 }
 
+// Menu Bar Logic
+function setMenuAppName(name) {
+  const appNameEl = document.querySelector(".menu-left .menu-item.active");
+  if (appNameEl) {
+    appNameEl.textContent = name;
+  }
+}
+
 function openApp(appName) {
   const windowId = appName + "-app";
   const appWindow = document.getElementById(windowId);
@@ -28,6 +37,9 @@ function openApp(appName) {
   if (appWindow) {
     appWindow.classList.remove("hidden");
     bringToFront(appWindow);
+    // Update Menu Bar Text
+    const title = appName.charAt(0).toUpperCase() + appName.slice(1);
+    setMenuAppName(title);
   }
 }
 
@@ -36,6 +48,10 @@ function closeApp(windowId) {
   if (appWindow) {
     appWindow.classList.add("hidden");
     appWindow.classList.remove("maximized");
+    // Reset to Finder if closing?
+    // Simple logic: if closing current active, go back to Finder.
+    // For now, let's just set it to Finder to be safe or check other windows.
+    setMenuAppName("Finder");
   }
 }
 
@@ -53,8 +69,8 @@ let cart = [];
 function addToCart(name, price) {
   cart.push({ name, price });
   renderCart();
-  // Optional: open cart when added
   // openApp('cart');
+  // Flash cart icon or something?
 }
 
 function renderCart() {
@@ -77,8 +93,11 @@ function renderCart() {
     const div = document.createElement("div");
     div.className = "cart-item";
     div.innerHTML = `
-            <span>${item.name}</span>
-            <span>$${item.price} <span style="cursor:pointer; color:red; margin-left:8px;" onclick="removeFromCart(${index})">×</span></span>
+             <span>${item.name}</span>
+            <div style="display:flex; align-items:center;">
+                <span>$${item.price}</span>
+                <span class="remove-btn" onclick="removeFromCart(${index})">×</span>
+            </div>
         `;
     cartContainer.appendChild(div);
   });
@@ -91,18 +110,26 @@ function removeFromCart(index) {
   renderCart();
 }
 
-// Draggable Logic - Snappy
+// Draggable Logic
 const windows = document.querySelectorAll(".window");
 windows.forEach((win) => {
   const header = win.querySelector(".window-header");
 
+  // Activate on click
   win.addEventListener("mousedown", () => {
     bringToFront(win);
+    // Also update menu name when clicking window
+    const title = win.querySelector(".window-title").textContent;
+    setMenuAppName(title);
   });
 
   if (header) {
     header.addEventListener("mousedown", (e) => {
-      if (e.target.classList.contains("dot")) return;
+      if (
+        e.target.classList.contains("dot") ||
+        e.target.closest(".window-controls")
+      )
+        return;
       if (win.classList.contains("maximized")) return;
 
       let isDragging = true;
@@ -115,11 +142,24 @@ windows.forEach((win) => {
 
       function onMouseMove(e) {
         if (!isDragging) return;
-        // Raw styling updates for snappiness - no requestAnimationFrame for simplicity unless needed
+
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
-        win.style.left = `${startLeft + dx}px`;
-        win.style.top = `${startTop + dy}px`;
+
+        let newLeft = startLeft + dx;
+        let newTop = startTop + dy;
+
+        // Constraints
+        const minLeft = -win.offsetWidth + 50;
+        const maxLeft = window.innerWidth - 50;
+        const minTop = 32; // Menu height
+        const maxTop = window.innerHeight - 50;
+
+        newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
+        newTop = Math.max(minTop, Math.min(newTop, maxTop));
+
+        win.style.left = `${newLeft}px`;
+        win.style.top = `${newTop}px`;
       }
 
       function onMouseUp() {
@@ -134,9 +174,16 @@ windows.forEach((win) => {
   }
 });
 
+// Reset to Finder when clicking desktop
+document.querySelector(".desktop-area")?.addEventListener("mousedown", (e) => {
+  if (e.target.classList.contains("desktop-area")) {
+    setMenuAppName("Finder");
+  }
+});
+
 setInterval(updateClock, 1000);
 updateClock();
-// Expose functions globally for HTML access
+
 window.openApp = openApp;
 window.closeApp = closeApp;
 window.toggleMaximize = toggleMaximize;
