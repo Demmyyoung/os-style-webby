@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquid Glass OS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-mesh"></div>
+
+    <!-- Top Menu Bar -->
+    <header class="glass-panel menu-bar">
+        <div class="menu-left">
+            <span class="apple-logo"></span>
+            <span class="menu-item active">Finder</span>
+            <!-- Removed other menu items as requested -->
+        </div>
+        <div class="menu-right">
+            <!-- Custom battery/wifi icons instead of emojis -->
+            <div class="status-icon wifi-icon">
+                <div class="wifi-arc"></div>
+                <div class="wifi-arc"></div>
+                <div class="wifi-dot"></div>
+            </div>
+            <div class="status-icon battery-icon">
+                <div class="battery-body">
+                    <div class="battery-fill"></div>
+                </div>
+                <div class="battery-tip"></div>
+            </div>
+            <span class="status-item" id="clock">12:00 PM</span>
+        </div>
+    </header>
+
+    <!-- Desktop Area -->
+    <main class="desktop-area">
+        <!-- Store Window -->
+        <div id="store-app" class="window glass-panel hidden" style="top: 100px; left: 150px;">
+            <div class="window-header">
+                <div class="window-controls">
+                    <span class="dot close" onclick="closeApp('store-app')"></span>
+                    <span class="dot minimize" onclick="closeApp('store-app')"></span>
+                    <span class="dot maximize" onclick="toggleMaximize('store-app')"></span>
+                </div>
+                <div class="window-title">Store</div>
+            </div>
+            <div class="window-content">
+                <h1>Store</h1>
+                <p>Browse Items</p>
+                <div class="card-grid">
+                    <div class="glass-card" onclick="addToCart('Phone', 999)">
+                        <div class="card-icon">📱</div>
+                        <h3>Phone</h3>
+                        <p>$999</p>
+                        <button class="add-btn">Add</button>
+                    </div>
+                    <div class="glass-card" onclick="addToCart('Laptop', 1299)">
+                        <div class="card-icon">💻</div>
+                        <h3>Laptop</h3>
+                        <p>$1299</p>
+                        <button class="add-btn">Add</button>
+                    </div>
+                    <div class="glass-card" onclick="addToCart('Watch', 399)">
+                        <div class="card-icon">⌚</div>
+                        <h3>Watch</h3>
+                        <p>$399</p>
+                        <button class="add-btn">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Window -->
+        <div id="cart-app" class="window glass-panel hidden" style="top: 200px; left: 350px;">
+            <div class="window-header">
+                <div class="window-controls">
+                    <span class="dot close" onclick="closeApp('cart-app')"></span>
+                    <span class="dot minimize" onclick="closeApp('cart-app')"></span>
+                    <span class="dot maximize" onclick="toggleMaximize('cart-app')"></span>
+                </div>
+                <div class="window-title">Cart</div>
+            </div>
+            <div class="window-content">
+                <h1>Your Cart</h1>
+                <div id="cart-items" class="cart-list">
+                    <!-- Cart items will be rendered here -->
+                    <div class="empty-state">Cart is empty</div>
+                </div>
+                <div class="cart-footer">
+                    <span>Total: <b id="cart-total">$0</b></span>
+                    <button class="glass-button">Checkout</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Dock -->
+    <div class="dock-container">
+        <div class="dock glass-panel">
+            <div class="dock-item" onclick="openApp('store')" title="Store">
+                <!-- Using Folder Icon for Store as requested -->
+                <img src="Icons/icons8-folder-50.svg" alt="Store" class="app-icon-img">
+            </div>
+            <div class="dock-item" onclick="openApp('cart')" title="Cart">
+                <!-- Using generic image placeholder if file missing, or maybe the user linked one? I'll use text backup just in case -->
+                <div class="app-icon cart-icon" style="font-size: 30px;">🛒</div>
+            </div>
+            <div class="dock-separator"></div>
+            <div class="dock-item" title="Trash">
+                <img src="Icons/icons8-trash-50.svg" alt="Trash" class="app-icon-img">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
